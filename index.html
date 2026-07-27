@@ -3,6 +3,7 @@
     <head>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <title>4for4's</title>
+        <link rel="icon" type="image/png" href="images/logo.png">
         
         <!--Resume download script-->
         <script>if (confirm("Would you like a copy of our resumes?\nClicking confirm will redirect you to a new page.")) window.location.href = "resumes/resumes.pdf";</script>
@@ -16,6 +17,15 @@
         <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.1.5/dist/mindar-image-three.prod.js"></script>
     </head>
     <body>
-       
+        <a-scene mindar-image="imageTargetSrc: mindar-assets/targets.mind;" color-space="sRGB" renderer="colorManagement: true, physicallyCorrectLights" vr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: false">
+            <a-assets>
+                <a-asset-item id="bioModel" src=""></a-asset-item>
+            </a-assets>
+
+            <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
+            <a-entity mindar-image-target="targetIndex: 0">
+                <a-gltf-model rotation="0 0 0 " position="0 0 0.1" scale="0.005 0.005 0.005" src="#bioModel" animation="property: position; to: 0 0.1 0.1; dur: 1000; easing: easeInOutQuad; loop: true; dir: alternate">
+            </a-entity>
+        </a-scene>
     </body>
 </html>
