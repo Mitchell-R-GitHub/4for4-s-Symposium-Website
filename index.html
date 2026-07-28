@@ -1,25 +1,34 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
     <head>
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>4for4's</title>
-        <link rel="icon" type="image/png" href="images/logo.png">
-       
-        <!--AFRAME Installation-->
-        <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.1.5/dist/mindar-image.prod.js"></script>
-        <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.1.5/dist/mindar-image-aframe.prod.js"></script>
+        <link rel="icon" type="icon/png" href="images/logo.png">
+        
+        <!--Bootstap Installation-->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
     </head>
     <body>
-        <a-scene mindar-image="imageTargetSrc: mindar-assets/targets/targets.mind;" color-space="sRGB" renderer="colorManagement: true, physicallyCorrectLights" vr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: false">
-            <a-assets>
-                <a-asset-item id="logoModel" src="mindar-assets/3d-models/4for4sLogo.glb"></a-asset-item>
-            </a-assets>
-
-            <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
-            <a-entity mindar-image-target="targetIndex: 0">
-                <a-gltf-model rotation="0 0 0 " position="0 0 0.1" scale="0.005 0.005 0.005" src="#logoModel" animation="property: position; to: 0 0.1 0.1; dur: 1000; easing: easeInOutQuad; loop: true; dir: alternate"></a-gltf-model>
-            </a-entity>
-        </a-scene>
+        <div class="container text-center">
+            <img src="images/4for4s-header-logo.png" alt="4for4s-header-logo" width="400"> 
+            <div class="card">
+                <div class="card-body">
+                    <h2>Who we are</h2>
+                    <p>
+                        Team 4for4's is a capstone group from Camosun College's Information and Computer Systems (ICS) and Interactive Media Developer (IMD) programs. We are a multidisciplinary team combining software development, augmented reality, design, and communication to create meaningful digital experiences.
+                        Our capstone project, Monument Unmaking, is an augmented reality application that invites users to view public art in Victoria through a new lens. By pointing their mobile device at selected art installations, users experience interactive AR overlays that offer alternative perspectives and encourage reflection on the history, meaning, and context of these works.
+                        Our team brings together a diverse set of skills to make this project possible. Vini leads backend engineering, developing the systems that power the application. Egor serves as Lead Designer, crafting the visual identity and user experience. Caleb is the Lead Communicator and AR Developer, coordinating the team while building the augmented reality experience. Mitchell contributes as a Full-Stack Developer and Engineer, supporting both the application's frontend and backend development.
+                        Together, Team 4for4 is committed to building innovative technology that blends storytelling, design, and interactive media to create engaging experiences that connect people with the spaces and stories around them.
+                    </p>
+                </div>
+            </div>
+            <div class="d-flex justify-content-center p-3">
+                <a href="ar-experience.html"><button class="btn btn-primary m-2">Launch demo AR experience</button></a>
+                <a href="resumes/resumes.pdf"><button class="btn btn-success m-2">View our resumes</button></a>
+            </div>
+        </div>
+        <!--Bootstrap Installation-->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
     </body>
 </html>
