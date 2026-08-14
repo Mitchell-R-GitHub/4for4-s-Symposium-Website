@@ -1,25 +1,270 @@
 <!DOCTYPE html>
+<!--
+  AR experience by Caleb Irvine
+  https://github.com/calebmirvine
+  Made with MindAR and A-Frame
+-->
 <html lang="en">
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <title>4for4's</title>
         <link rel="icon" type="image/png" href="images/4for4s-favicon-logo.png">
-        
-        <!--AFRAME Installation-->
+        <style>
+            html, body {
+                margin: 0;
+                padding: 0;
+                width: 100%;
+                height: 100%;
+                overflow: hidden;
+                background: transparent;
+            }
+            .a-canvas {
+                background: transparent !important;
+                touch-action: none;
+            }
+            #ar-coach {
+                position: fixed;
+                left: 50%;
+                bottom: max(20px, env(safe-area-inset-bottom));
+                transform: translateX(-50%);
+                z-index: 20;
+                max-width: calc(100% - 32px);
+                padding: 12px 18px;
+                border-radius: 14px;
+                background: rgba(40, 51, 58, 0.88);
+                border: 1px solid rgba(133, 186, 225, 0.55);
+                color: #ffffff;
+                font: 600 15px/1.35 -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+                text-align: center;
+                pointer-events: none;
+                box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+            }
+            #ar-coach.hidden {
+                display: none;
+            }
+            #ar-coach .sub {
+                display: block;
+                margin-top: 4px;
+                color: #85BAE1;
+                font-weight: 600;
+                font-size: 13px;
+            }
+        </style>
+
         <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.1.5/dist/mindar-image.prod.js"></script>
         <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.1.5/dist/mindar-image-aframe.prod.js"></script>
+        <script src="https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@6.1.1/dist/aframe-extras.loaders.min.js"></script>
+        <script src="js/ar-experience.js"></script>
     </head>
     <body>
-            <a-scene mindar-image="imageTargetSrc: mindar-assets/targets/targets.mind;" color-space="sRGB" renderer="colorManagement: true, physicallyCorrectLights" vr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: false">
-                <a-assets>
-                    <a-asset-item id="logoModel" src="mindar-assets/3d-models/4for4sLogo.glb"></a-asset-item>
-                </a-assets>
-                <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
-                <a-entity mindar-image-target="targetIndex: 0">
-                    <a-gltf-model rotation="0 0 0 " position="0 0 0.1" scale="0.005 0.005 0.005" src="#logoModel" animation="property: position; to: 0 0.1 0.1; dur: 1000; easing: easeInOutQuad; loop: true; dir: alternate"></a-gltf-model>
+        <a-scene
+            mindar-image="imageTargetSrc: mindar-assets/targets/targets.mind; filterMinCF: 0.0001; filterBeta: 0.001; missTolerance: 10; uiScanning: no"
+            color-space="sRGB"
+            renderer="alpha: true; colorManagement: true; physicallyCorrectLights: false"
+            vr-mode-ui="enabled: false"
+            device-orientation-permission-ui="enabled: false"
+            ar-camera-feed
+            ar-coach
+        >
+            <a-assets>
+                <a-asset-item id="fishModel" src="assets/Fish.glb"></a-asset-item>
+                <img id="photoCaleb" src="images/caleb-irvine.jpg" />
+                <img id="photoEgor" src="images/egor-lidobardov.jpg" />
+                <img id="photoVinicius" src="images/vinicius-costa.jpg" />
+                <img id="photoMitchell" src="images/mitchell-rose.jpg" />
+                <img id="iconFile" src="images/file-black-icon.svg" />
+                <img id="iconGithub" src="images/github-icon.svg" />
+                <canvas id="cardChromeCanvas" width="602" height="798"></canvas>
+            </a-assets>
+
+            <a-camera
+                position="0 0 0"
+                look-controls="enabled: false"
+                cursor="fuse: false; rayOrigin: mouse"
+                raycaster="far: 10000; objects: .clickable"
+            ></a-camera>
+
+            <a-entity id="card-target" mindar-image-target="targetIndex: 0" scene-reveal>
+                <a-light type="ambient" color="#ffffff" intensity="0.7"></a-light>
+                <a-light type="directional" color="#ffffff" intensity="0.55" position="0 0.3 1.2"></a-light>
+
+                <a-entity
+                    id="profile-cards"
+                    visible="false"
+                    scale="0.001 0.001 0.001"
+                    animation__show="property: scale; to: 1 1 1; dur: 450; easing: easeOutQuad; startEvents: show-cards"
+                >
+                    <a-entity profile-card="member: caleb" flip-card position="-1.2 0.9 0.1" rotation="0 0 0" scale="3.2 3.2 3.2">
+                        <a-entity class="card-flipper">
+                            <a-entity class="card-front">
+                                <a-plane class="clickable flip-hit" width="0.40" height="0.53" position="0 0 -0.001" material="shader: flat; transparent: true; opacity: 0; depthTest: false"></a-plane>
+                                <a-plane class="card-chrome" width="0.40" height="0.53" position="0 0 0" material="shader: flat; side: front; alphaTest: 0.35" card-chrome></a-plane>
+                                <a-plane class="profile-photo" width="0.20" height="0.20" position="0 0.145 0.01" material="shader: flat; transparent: true; side: front"></a-plane>
+                                <a-plane class="profile-name" width="0.37" height="0.105" position="0 -0.018 0.012" material="shader: flat; transparent: true; alphaTest: 0.12"></a-plane>
+                                <a-plane class="clickable github-btn" press-feedback open-link="member: caleb; kind: github" visible="false" width="0.145" height="0.135" position="-0.088 -0.148 0.04" material="shader: flat; transparent: true; alphaTest: 0.35" btn-chrome>
+                                    <a-plane class="icon-github" width="0.048" height="0.048" position="0 0.018 0.002" material="shader: flat; transparent: true; alphaTest: 0.15"></a-plane>
+                                    <a-text value="GitHub" font="roboto" align="center" width="0.62" color="#ffffff" position="0 -0.026 0.003" side="front"></a-text>
+                                </a-plane>
+                                <a-plane class="clickable resume-btn" press-feedback open-link="member: caleb; kind: resume" width="0.145" height="0.135" position="0.088 -0.148 0.04" material="shader: flat; transparent: true; alphaTest: 0.35" btn-chrome>
+                                    <a-plane class="icon-file" width="0.048" height="0.048" position="0 0.018 0.002" material="shader: flat; transparent: true; alphaTest: 0.15"></a-plane>
+                                    <a-text value="Resume" font="roboto" align="center" width="0.62" color="#ffffff" position="0 -0.026 0.003" side="front"></a-text>
+                                </a-plane>
+                            </a-entity>
+                            <a-entity class="card-back" rotation="0 180 0" visible="false">
+                                <a-plane class="clickable flip-hit" width="0.40" height="0.53" position="0 0 -0.001" material="shader: flat; transparent: true; opacity: 0; depthTest: false"></a-plane>
+                                <a-plane class="card-chrome" width="0.40" height="0.53" position="0 0 0" material="shader: flat; side: front; alphaTest: 0.35" card-chrome></a-plane>
+                                <a-plane class="clickable profile-bio" width="0.34" height="0.46" position="-0.008 0 0.03" material="shader: flat; transparent: true; alphaTest: 0.1"></a-plane>
+                                <a-entity class="bio-scroll-ui" position="0.178 0 0.032">
+                                    <a-plane class="scroll-track" width="0.012" height="0.42" material="shader: flat; color: #1F282E; transparent: true; opacity: 0.75"></a-plane>
+                                    <a-plane class="scroll-thumb" width="0.008" height="0.12" position="0 0.12 0.002" material="shader: flat; color: #85BAE1"></a-plane>
+                                </a-entity>
+                            </a-entity>
+                        </a-entity>
+                    </a-entity>
+
+                    <a-entity profile-card="member: egor" flip-card position="1.2 .9 0.1" rotation="0 0 0" scale="3.2 3.2 3.2">
+                        <a-entity class="card-flipper">
+                            <a-entity class="card-front">
+                                <a-plane class="clickable flip-hit" width="0.40" height="0.53" position="0 0 -0.001" material="shader: flat; transparent: true; opacity: 0; depthTest: false"></a-plane>
+                                <a-plane class="card-chrome" width="0.40" height="0.53" position="0 0 0" material="shader: flat; side: front; alphaTest: 0.35" card-chrome></a-plane>
+                                <a-plane class="profile-photo" width="0.20" height="0.20" position="0 0.145 0.01" material="shader: flat; transparent: true; side: front"></a-plane>
+                                <a-plane class="profile-name" width="0.37" height="0.105" position="0 -0.018 0.012" material="shader: flat; transparent: true; alphaTest: 0.12"></a-plane>
+                                <a-plane class="clickable github-btn" press-feedback open-link="member: egor; kind: github" visible="false" width="0.145" height="0.135" position="-0.088 -0.148 0.04" material="shader: flat; transparent: true; alphaTest: 0.35" btn-chrome>
+                                    <a-plane class="icon-github" width="0.048" height="0.048" position="0 0.018 0.002" material="shader: flat; transparent: true; alphaTest: 0.15"></a-plane>
+                                    <a-text value="GitHub" font="roboto" align="center" width="0.62" color="#ffffff" position="0 -0.026 0.003" side="front"></a-text>
+                                </a-plane>
+                                <a-plane class="clickable resume-btn" press-feedback open-link="member: egor; kind: resume" width="0.145" height="0.135" position="0.088 -0.148 0.04" material="shader: flat; transparent: true; alphaTest: 0.35" btn-chrome>
+                                    <a-plane class="icon-file" width="0.048" height="0.048" position="0 0.018 0.002" material="shader: flat; transparent: true; alphaTest: 0.15"></a-plane>
+                                    <a-text value="Resume" font="roboto" align="center" width="0.62" color="#ffffff" position="0 -0.026 0.003" side="front"></a-text>
+                                </a-plane>
+                            </a-entity>
+                            <a-entity class="card-back" rotation="0 180 0" visible="false">
+                                <a-plane class="clickable flip-hit" width="0.40" height="0.53" position="0 0 -0.001" material="shader: flat; transparent: true; opacity: 0; depthTest: false"></a-plane>
+                                <a-plane class="card-chrome" width="0.40" height="0.53" position="0 0 0" material="shader: flat; side: front; alphaTest: 0.35" card-chrome></a-plane>
+                                <a-plane class="clickable profile-bio" width="0.34" height="0.46" position="-0.008 0 0.03" material="shader: flat; transparent: true; alphaTest: 0.1"></a-plane>
+                                <a-entity class="bio-scroll-ui" position="0.178 0 0.032">
+                                    <a-plane class="scroll-track" width="0.012" height="0.42" material="shader: flat; color: #1F282E; transparent: true; opacity: 0.75"></a-plane>
+                                    <a-plane class="scroll-thumb" width="0.008" height="0.12" position="0 0.12 0.002" material="shader: flat; color: #85BAE1"></a-plane>
+                                </a-entity>
+                            </a-entity>
+                        </a-entity>
+                    </a-entity>
+
+                    <a-entity profile-card="member: vinicius" flip-card position="-1.2 -.9 0.1" rotation="0 0 0" scale="3.2 3.2 3.2">
+                        <a-entity class="card-flipper">
+                            <a-entity class="card-front">
+                                <a-plane class="clickable flip-hit" width="0.40" height="0.53" position="0 0 -0.001" material="shader: flat; transparent: true; opacity: 0; depthTest: false"></a-plane>
+                                <a-plane class="card-chrome" width="0.40" height="0.53" position="0 0 0" material="shader: flat; side: front; alphaTest: 0.35" card-chrome></a-plane>
+                                <a-plane class="profile-photo" width="0.20" height="0.20" position="0 0.145 0.01" material="shader: flat; transparent: true; side: front"></a-plane>
+                                <a-plane class="profile-name" width="0.37" height="0.105" position="0 -0.018 0.012" material="shader: flat; transparent: true; alphaTest: 0.12"></a-plane>
+                                <a-plane class="clickable github-btn" press-feedback open-link="member: vinicius; kind: github" visible="false" width="0.145" height="0.135" position="-0.088 -0.148 0.04" material="shader: flat; transparent: true; alphaTest: 0.35" btn-chrome>
+                                    <a-plane class="icon-github" width="0.048" height="0.048" position="0 0.018 0.002" material="shader: flat; transparent: true; alphaTest: 0.15"></a-plane>
+                                    <a-text value="GitHub" font="roboto" align="center" width="0.62" color="#ffffff" position="0 -0.026 0.003" side="front"></a-text>
+                                </a-plane>
+                                <a-plane class="clickable resume-btn" press-feedback open-link="member: vinicius; kind: resume" width="0.145" height="0.135" position="0.088 -0.148 0.04" material="shader: flat; transparent: true; alphaTest: 0.35" btn-chrome>
+                                    <a-plane class="icon-file" width="0.048" height="0.048" position="0 0.018 0.002" material="shader: flat; transparent: true; alphaTest: 0.15"></a-plane>
+                                    <a-text value="Resume" font="roboto" align="center" width="0.62" color="#ffffff" position="0 -0.026 0.003" side="front"></a-text>
+                                </a-plane>
+                            </a-entity>
+                            <a-entity class="card-back" rotation="0 180 0" visible="false">
+                                <a-plane class="clickable flip-hit" width="0.40" height="0.53" position="0 0 -0.001" material="shader: flat; transparent: true; opacity: 0; depthTest: false"></a-plane>
+                                <a-plane class="card-chrome" width="0.40" height="0.53" position="0 0 0" material="shader: flat; side: front; alphaTest: 0.35" card-chrome></a-plane>
+                                <a-plane class="clickable profile-bio" width="0.34" height="0.46" position="-0.008 0 0.03" material="shader: flat; transparent: true; alphaTest: 0.1"></a-plane>
+                                <a-entity class="bio-scroll-ui" position="0.178 0 0.032">
+                                    <a-plane class="scroll-track" width="0.012" height="0.42" material="shader: flat; color: #1F282E; transparent: true; opacity: 0.75"></a-plane>
+                                    <a-plane class="scroll-thumb" width="0.008" height="0.12" position="0 0.12 0.002" material="shader: flat; color: #85BAE1"></a-plane>
+                                </a-entity>
+                            </a-entity>
+                        </a-entity>
+                    </a-entity>
+
+                    <a-entity profile-card="member: mitchell" flip-card position="1.2 -.9 0.1" rotation="0 0 0" scale="3.2 3.2 3.2">
+                        <a-entity class="card-flipper">
+                            <a-entity class="card-front">
+                                <a-plane class="clickable flip-hit" width="0.40" height="0.53" position="0 0 -0.001" material="shader: flat; transparent: true; opacity: 0; depthTest: false"></a-plane>
+                                <a-plane class="card-chrome" width="0.40" height="0.53" position="0 0 0" material="shader: flat; side: front; alphaTest: 0.35" card-chrome></a-plane>
+                                <a-plane class="profile-photo" width="0.20" height="0.20" position="0 0.145 0.01" material="shader: flat; transparent: true; side: front"></a-plane>
+                                <a-plane class="profile-name" width="0.37" height="0.105" position="0 -0.018 0.012" material="shader: flat; transparent: true; alphaTest: 0.12"></a-plane>
+                                <a-plane class="clickable github-btn" press-feedback open-link="member: mitchell; kind: github" visible="false" width="0.145" height="0.135" position="-0.088 -0.148 0.04" material="shader: flat; transparent: true; alphaTest: 0.35" btn-chrome>
+                                    <a-plane class="icon-github" width="0.048" height="0.048" position="0 0.018 0.002" material="shader: flat; transparent: true; alphaTest: 0.15"></a-plane>
+                                    <a-text value="GitHub" font="roboto" align="center" width="0.62" color="#ffffff" position="0 -0.026 0.003" side="front"></a-text>
+                                </a-plane>
+                                <a-plane class="clickable resume-btn" press-feedback open-link="member: mitchell; kind: resume" width="0.145" height="0.135" position="0.088 -0.148 0.04" material="shader: flat; transparent: true; alphaTest: 0.35" btn-chrome>
+                                    <a-plane class="icon-file" width="0.048" height="0.048" position="0 0.018 0.002" material="shader: flat; transparent: true; alphaTest: 0.15"></a-plane>
+                                    <a-text value="Resume" font="roboto" align="center" width="0.62" color="#ffffff" position="0 -0.026 0.003" side="front"></a-text>
+                                </a-plane>
+                            </a-entity>
+                            <a-entity class="card-back" rotation="0 180 0" visible="false">
+                                <a-plane class="clickable flip-hit" width="0.40" height="0.53" position="0 0 -0.001" material="shader: flat; transparent: true; opacity: 0; depthTest: false"></a-plane>
+                                <a-plane class="card-chrome" width="0.40" height="0.53" position="0 0 0" material="shader: flat; side: front; alphaTest: 0.35" card-chrome></a-plane>
+                                <a-plane class="clickable profile-bio" width="0.34" height="0.46" position="-0.008 0 0.03" material="shader: flat; transparent: true; alphaTest: 0.1"></a-plane>
+                                <a-entity class="bio-scroll-ui" position="0.178 0 0.032">
+                                    <a-plane class="scroll-track" width="0.012" height="0.42" material="shader: flat; color: #1F282E; transparent: true; opacity: 0.75"></a-plane>
+                                    <a-plane class="scroll-thumb" width="0.008" height="0.12" position="0 0.12 0.002" material="shader: flat; color: #85BAE1"></a-plane>
+                                </a-entity>
+                            </a-entity>
+                        </a-entity>
+                    </a-entity>
                 </a-entity>
-            </a-scene>
+
+                <a-entity
+                    visible="false"
+                    swim-orbit="radiusX: 2.25; radiusY: 2.25; height: 0.34; speed: 0.5; phase: 0; wiggle: 8"
+                >
+                    <a-gltf-model
+                        src="#fishModel"
+                        scale="0.075 0.075 0.075"
+                        position="-0.108 -0.388 -0.258"
+                        rotation="0 0 0"
+                        animation-mixer="clip: *; timeScale: 0"
+                        dim-model="brightness: 0.55"
+                    ></a-gltf-model>
+                </a-entity>
+                <a-entity
+                    visible="false"
+                    swim-orbit="radiusX: 2.25; radiusY: 2.25; height: 0.34; speed: 0.5; phase: 1.5708; wiggle: 9"
+                >
+                    <a-gltf-model
+                        src="#fishModel"
+                        scale="0.075 0.075 0.075"
+                        position="-0.108 -0.388 -0.258"
+                        rotation="0 0 0"
+                        animation-mixer="clip: *; timeScale: 0"
+                        dim-model="brightness: 0.55"
+                    ></a-gltf-model>
+                </a-entity>
+                <a-entity
+                    visible="false"
+                    swim-orbit="radiusX: 2.25; radiusY: 2.25; height: 0.34; speed: 0.5; phase: 3.1416; wiggle: 10"
+                >
+                    <a-gltf-model
+                        src="#fishModel"
+                        scale="0.075 0.075 0.075"
+                        position="-0.108 -0.388 -0.258"
+                        rotation="0 0 0"
+                        animation-mixer="clip: *; timeScale: 0"
+                        dim-model="brightness: 0.55"
+                    ></a-gltf-model>
+                </a-entity>
+                <a-entity
+                    visible="false"
+                    swim-orbit="radiusX: 2.25; radiusY: 2.25; height: 0.34; speed: 0.5; phase: 4.7124; wiggle: 11"
+                >
+                    <a-gltf-model
+                        src="#fishModel"
+                        scale="0.075 0.075 0.075"
+                        position="-0.108 -0.388 -0.258"
+                        rotation="0 0 0"
+                        animation-mixer="clip: *; timeScale: 0"
+                        dim-model="brightness: 0.55"
+                    ></a-gltf-model>
+                </a-entity>
+            </a-entity>
+        </a-scene>
+        <div id="ar-coach">
+            Point at the "4For4s" card
+        </div>
     </body>
 </html>
